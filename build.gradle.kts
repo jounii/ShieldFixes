@@ -35,6 +35,10 @@ sourceSets.main {
 
 repositories {
     mavenCentral()
+    exclusiveContent {
+        forRepository { maven(rootProject.uri("../.maven-local")) { name = "Workspace" } }
+        filter { includeGroup("main.lib") }
+    }
     maven("https://maven.fabricmc.net/") { name = "FabricMC" }
     exclusiveContent {
         forRepository { maven("https://api.modrinth.com/maven") { name = "Modrinth" } }
@@ -47,7 +51,12 @@ dependencies {
     loomx.applyMojangMappings()
 
     modImplementation("net.fabricmc:fabric-loader:$loaderversion")
-    implementation("maven.modrinth:walksylib:$walksylibversion")
+    if (sc.current.parsed >= "26.3") {
+        implementation("main.lib:WalksyLib:$walksylibversion")
+        implementation("net.fabricmc.fabric-api:fabric-api:${sc.properties.get<String>("deps.fabric_api")}")
+    } else {
+        implementation("maven.modrinth:walksylib:$walksylibversion")
+    }
 }
 
 loom {
@@ -66,7 +75,6 @@ java {
     targetCompatibility = requiredJava
 
     toolchain {
-        vendor = JvmVendorSpec.ADOPTIUM
         languageVersion = JavaLanguageVersion.of(requiredJava.majorVersion)
     }
 }
@@ -83,6 +91,8 @@ tasks {
             "mod_version" to version,
             "mod_description" to moddescription,
             "minecraft_version_range" to versionrange,
+            "java_version" to requiredJava.majorVersion,
+            "walksylib_version_range" to if (sc.current.parsed >= "26.3") ">=1.0.13" else ">=0.9.95",
             "versioned_mixins" to versionedMixins.sorted().joinToString(",\n    ") { "\"$it\"" }
         )
 

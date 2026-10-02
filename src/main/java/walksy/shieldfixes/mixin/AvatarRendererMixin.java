@@ -1,5 +1,7 @@
 package walksy.shieldfixes.mixin;
 
+//? if >=26.3
+//import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.LocalPlayer;
@@ -64,10 +66,14 @@ public class AvatarRendererMixin {
     *///?}
         cir.cancel();
         boolean usingShield = ShieldStateManager.isUsingShield(player, Config.factorDelay);
+        //? if >=26.3 {
+        /*boolean swinging = player.isSwinging();
+        *///?} else
+        boolean swinging = player.swinging;
         if (stack.isEmpty()) {
             cir.setReturnValue(HumanoidModel.ArmPose.EMPTY);
         //? if >=1.21.5 {
-        } else if (!player.swinging && stack.is(Items.CROSSBOW) && CrossbowItem.isCharged(stack) && !usingShield) {
+        } else if (!swinging && stack.is(Items.CROSSBOW) && CrossbowItem.isCharged(stack) && !usingShield) {
             cir.setReturnValue(HumanoidModel.ArmPose.CROSSBOW_HOLD);
         //?}
         } else {
@@ -119,13 +125,18 @@ public class AvatarRendererMixin {
                 }
             //? if <1.21.5 {
             /*// Vanilla only falls back to the charged crossbow pose when no item is being used.
-            } else if (!player.swinging && stack.is(Items.CROSSBOW) && CrossbowItem.isCharged(stack) && !usingShield) {
+            } else if (!swinging && stack.is(Items.CROSSBOW) && CrossbowItem.isCharged(stack) && !usingShield) {
                 cir.setReturnValue(HumanoidModel.ArmPose.CROSSBOW_HOLD);
                 return;
             *///?}
             }
 
-            //? if >=1.21.11 {
+            //? if >=26.3 {
+            /*if (HumanoidMobRenderer.usesSpearPose(stack, hand.asArm(player.getMainArm()), player)) {
+                cir.setReturnValue(HumanoidModel.ArmPose.SPEAR);
+                return;
+            }
+            *///?} elif >=1.21.11 {
             SwingAnimation swingAnimation = stack.get(DataComponents.SWING_ANIMATION);
             if (swingAnimation != null && swingAnimation.type() == SwingAnimationType.STAB && player.swinging) {
                 cir.setReturnValue(HumanoidModel.ArmPose.SPEAR);

@@ -29,7 +29,7 @@
   "depends": {
     "fabricloader": "*",
     "minecraft": "${minecraft_version_range}",
-    "java": ">=17",
-    "walksylib": ">=0.9.95"
+    "java": ">=${java_version}",
+    "walksylib": "${walksylib_version_range}"
   }
 }

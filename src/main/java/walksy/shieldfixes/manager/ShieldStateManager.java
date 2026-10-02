@@ -2,6 +2,10 @@ package walksy.shieldfixes.manager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
+//? if >=26.3 {
+/*import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.Weapon;
+*///?} else
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
@@ -67,6 +71,10 @@ public class ShieldStateManager {
     }
 
     public static boolean disablesShield(Player player) {
+        //? if >=26.3 {
+        /*Weapon weapon = player.getWeaponItem().get(DataComponents.WEAPON);
+        return weapon != null && weapon.disableBlockingForSeconds() > 0;
+        *///?} else
         return player.getWeaponItem().getItem() instanceof AxeItem;
     }
 }
